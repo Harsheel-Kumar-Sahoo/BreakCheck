@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Web App",
+    "owner": "Frontend Team",
+    "repo": "github.com/acme/web-app",
+    "usages": [
+      { "method": "GET", "path": "/orders", "params": [], "requestFields": [], "responseFields": ["id", "total", "status"] },
+      { "method": "GET", "path": "/orders/{id}", "params": [], "requestFields": [], "responseFields": ["total", "status"] }
+    ]
+  },
+  {
+    "name": "Mobile App",
+    "owner": "Mobile Team",
+    "repo": "github.com/acme/mobile-app",
+    "usages": [
+      { "method": "GET", "path": "/orders/{id}", "params": [], "requestFields": [], "responseFields": ["id", "status"] },
+      { "method": "DELETE", "path": "/orders/{id}", "params": [], "requestFields": [], "responseFields": [] }
+    ]
+  },
+  {
+    "name": "Billing Service",
+    "owner": "Payments Team",
+    "repo": "github.com/acme/billing-service",
+    "usages": [
+      { "method": "GET", "path": "/orders/{id}", "params": [], "requestFields": [], "responseFields": ["total", "customerId"] }
+    ]
+  },
+  {
+    "name": "Analytics Job",
+    "owner": "Data Team",
+    "repo": "github.com/acme/analytics-job",
+    "usages": [
+      { "method": "GET", "path": "/orders", "params": ["query:status"], "requestFields": [], "responseFields": ["createdAt"] }
+    ]
+  },
+  {
+    "name": "Partner Integration",
+    "owner": "Partnerships Team",
+    "repo": "github.com/acme/partner-integration",
+    "usages": [
+      { "method": "POST", "path": "/orders", "params": [], "requestFields": ["customerId", "total"], "responseFields": ["id"] }
+    ]
+  }
+]

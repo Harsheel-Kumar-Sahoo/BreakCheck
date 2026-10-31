@@ -6,21 +6,47 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ping": "tsx scripts/ping.ts",
+    "test": "vitest run",
+    "setup-db": "tsx scripts/setup-db.ts",
+    "seed": "tsx scripts/seed.ts",
+    "verify:p1": "tsx scripts/verify-phase1.ts",
+    "backfill": "tsx scripts/backfill-normalized.ts",
+    "diff:preview": "tsx scripts/diff-preview.ts",
+    "verify:p4": "tsx scripts/verify-phase4.ts",
+    "verify:p5": "tsx scripts/verify-phase5.ts",
+    "verify:p6": "tsx scripts/verify-phase6.ts",
+    "verify:p7": "tsx scripts/verify-phase7.ts",
+    "breakcheck": "tsx cli/breakcheck.ts",
+    "verify:p8": "tsx scripts/verify-phase8.ts",
+    "explain": "tsx scripts/explain-indexes.ts",
+    "verify:edge": "tsx scripts/verify-edgecases.ts",
+    "reset-demo": "tsx scripts/reset-demo.ts"
   },
   "dependencies": {
+    "@apidevtools/swagger-parser": "^13.1.0",
+    "js-yaml": "^5.5.0",
+    "lucide-react": "^1.65.0",
+    "mongodb": "^7.7.0",
     "next": "16.4.3",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "recharts": "^3.10.1"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
-    "@types/node": "^20",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^24.19.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^18.0.9",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
-  }
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^5.0.5"
+  },
+  "bin": { "breakcheck": "./cli/breakcheck.ts" }
 }
