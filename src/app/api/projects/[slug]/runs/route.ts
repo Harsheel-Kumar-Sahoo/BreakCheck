@@ -19,4 +19,4 @@ export async function POST(req: Request, { params }: Ctx) {
 
   const result = await runAnalysis({ projectId: project._id, fromVersionId: from, toVersionId: to, simulateFailure: body?.simulateFailure === true });
   return NextResponse.json(result, { status: result.ok ? 200 : 500 });
-}
+}   

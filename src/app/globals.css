@@ -1,6 +1,41 @@
 @import "tailwindcss";
 
-body {
-  background: #f8fafc;
-  color: #0f172a;
-}
+body { background: #f8fafc; color: #0f172a; }
+
+/* ---------- Dark mode: remap the light utility classes ---------- */
+html.dark body { background: #0b1120; color: #e2e8f0; }
+html.dark .bg-white { background-color: #111a2e; }
+html.dark .bg-white\/90 { background-color: rgb(17 26 46 / 0.9); }
+html.dark .bg-slate-50 { background-color: #0f172a; }
+html.dark .bg-slate-100 { background-color: #1e293b; }
+html.dark .bg-slate-200 { background-color: #243049; }
+html.dark .border-slate-100,
+html.dark .border-slate-200 { border-color: #263248; }
+html.dark .border-slate-300 { border-color: #334155; }
+html.dark .text-slate-900,
+html.dark .text-slate-800 { color: #f1f5f9; }
+html.dark .text-slate-700,
+html.dark .text-slate-600 { color: #cbd5e1; }
+html.dark .text-slate-500 { color: #94a3b8; }
+html.dark .text-slate-400 { color: #64748b; }
+html.dark .hover\:bg-slate-50:hover,
+html.dark .hover\:bg-slate-100:hover { background-color: #1e293b; }
+html.dark input,
+html.dark select,
+html.dark textarea { background-color: #0f172a; color: #e2e8f0; }
+html.dark .bg-indigo-50 { background-color: #1e1b4b; }
+html.dark .text-indigo-700 { color: #a5b4fc; }
+html.dark .text-indigo-600 { color: #818cf8; }
+/* severity colours stay semantic, just darker backgrounds */
+html.dark .bg-red-50 { background-color: #3b1219; }
+html.dark .bg-amber-50 { background-color: #3a2a0c; }
+html.dark .bg-green-50 { background-color: #0f2e1d; }
+html.dark .bg-red-100 { background-color: #4c1d24; }
+html.dark .bg-amber-100 { background-color: #4a360f; }
+html.dark .bg-green-100 { background-color: #14402a; }
+html.dark .text-red-800, html.dark .text-red-900 { color: #fca5a5; }
+html.dark .text-amber-800, html.dark .text-amber-900 { color: #fcd34d; }
+html.dark .text-green-800, html.dark .text-green-900 { color: #86efac; }
+html.dark .border-red-300 { border-color: #7f1d1d; }
+html.dark .border-amber-300 { border-color: #78350f; }
+html.dark .border-green-300 { border-color: #14532d; }

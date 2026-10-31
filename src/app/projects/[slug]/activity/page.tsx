@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import ProjectNav from "@/components/ProjectNav";
 
 type Item = { id: string; type: string; text: string; at: string; live?: boolean };
+type Mode = "connecting" | "live" | "polling";
 
 const TONE = (t: string) =>
   t.includes("failed") || t.includes("invalid") || t.includes("conflict") ? "bg-red-500"
@@ -27,39 +28,69 @@ const TEXT: Record<string, (p: any) => string> = {
 export default function ActivityPage() {
   const { slug } = useParams<{ slug: string }>();
   const [items, setItems] = useState<Item[] | null>(null);
-  const [connected, setConnected] = useState(false);
+  const [mode, setMode] = useState<Mode>("connecting");
   const projectId = useRef("");
+  const modeRef = useRef<Mode>("connecting");
+  const setBoth = (m: Mode) => { modeRef.current = m; setMode(m); };
+
+  const fetchEvents = useCallback(async () => {
+    const r = await fetch(`/api/projects/${slug}/events`, { cache: "no-store" });
+    if (!r.ok) return;
+    const j = await r.json();
+    projectId.current = j.projectId;
+    setItems((cur) => {
+      const liveIds = new Set((cur ?? []).filter((i) => i.live).map((i) => i.id));
+      return j.events.map((e: any) => ({
+        id: e._id, type: e.type, text: TEXT[e.type]?.(e.payload ?? {}) ?? e.type, at: e.receivedAt, live: liveIds.has(e._id),
+      }));
+    });
+  }, [slug]);
 
   useEffect(() => {
     let es: EventSource | undefined;
+    let poll: ReturnType<typeof setInterval> | undefined;
+    let fallback: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
+
+    const startPolling = () => {
+      if (poll || cancelled) return;
+      setBoth("polling");
+      poll = setInterval(fetchEvents, 5000);
+    };
+
     (async () => {
-      const r = await fetch(`/api/projects/${slug}/events`);
-      if (!r.ok || cancelled) return;
-      const j = await r.json();
-      projectId.current = j.projectId;
-      setItems(j.events.map((e: any) => ({
-        id: e._id, type: e.type, text: (TEXT[e.type]?.(e.payload ?? {}) ?? e.type), at: e.receivedAt,
-      })));
+      await fetchEvents();
+      if (cancelled) return;
       es = new EventSource("/api/live");
-      es.onopen = () => setConnected(true);
-      es.onerror = () => setConnected(false);
+      es.onopen = () => {
+        if (poll) { clearInterval(poll); poll = undefined; }
+        setBoth("live");
+      };
+      es.onerror = () => { if (modeRef.current !== "live") startPolling(); else setBoth("connecting"); };
       es.onmessage = (ev) => {
         const m = JSON.parse(ev.data);
-        if (m.projectId !== projectId.current) return; // other projects' events are not ours
+        if (m.projectId !== projectId.current) return;
         setItems((cur) => (cur?.some((i) => i.id === m.id) ? cur : [{ id: m.id, type: m.type, text: m.text, at: m.at, live: true }, ...(cur ?? [])].slice(0, 100)));
       };
+      // If SSE has not connected within 4 seconds, assume serverless and poll instead.
+      fallback = setTimeout(() => { if (modeRef.current === "connecting") startPolling(); }, 4000);
     })();
-    return () => { cancelled = true; es?.close(); };
-  }, [slug]);
+
+    return () => { cancelled = true; es?.close(); if (poll) clearInterval(poll); if (fallback) clearTimeout(fallback); };
+  }, [fetchEvents]);
+
+  const status = {
+    connecting: { dot: "bg-slate-300", text: "Connecting…" },
+    live: { dot: "bg-green-500", text: "Live: change stream pushes updates as they happen" },
+    polling: { dot: "bg-amber-400", text: "Polling every 5 seconds (live stream unavailable on this host)" },
+  }[mode];
 
   return (
     <main className="mx-auto max-w-3xl space-y-6 p-6">
       <h1 className="text-2xl font-semibold">Activity · {slug}</h1>
       <ProjectNav slug={slug} current="activity" />
       <div className="flex items-center gap-2 text-sm text-slate-600">
-        <span className={`h-2 w-2 rounded-full ${connected ? "bg-green-500" : "bg-slate-300"}`} />
-        {connected ? "Live: updates appear as they happen" : "Connecting…"}
+        <span className={`h-2 w-2 rounded-full ${status.dot}`} />{status.text}
       </div>
 
       {items === null && <div className="h-24 animate-pulse rounded-xl bg-slate-200" />}

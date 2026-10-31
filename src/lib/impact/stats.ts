@@ -57,4 +57,4 @@ export async function openTaskCount(db: Db, projectId: ObjectId): Promise<number
     { $count: "n" },
   ]).toArray();
   return r[0]?.n ?? 0;
-}
+}   

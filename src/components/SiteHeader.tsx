@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ThemeToggle from "./ThemeToggle";
 
 export default function SiteHeader() {
   return (
@@ -8,9 +9,12 @@ export default function SiteHeader() {
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-sm font-bold text-white">BC</span>
           <span className="font-semibold text-slate-900">BreakCheck</span>
         </Link>
-        <div className="hidden text-right text-xs leading-tight text-slate-600 sm:block">
-          <div className="font-medium text-slate-800">Team Almost Avengers · SVNIT</div>
-          <div>NEXUS UNCHARTED · MongoDB Student Hackathon</div>
+        <div className="flex items-center gap-4">
+          <div className="hidden text-right text-xs leading-tight text-slate-600 sm:block">
+            <div className="font-medium text-slate-800">Team Almost Avengers · SVNIT</div>
+            <div>NEXUS UNCHARTED · MongoDB Student Hackathon</div>
+          </div>
+          <ThemeToggle />
         </div>
       </div>
     </header>

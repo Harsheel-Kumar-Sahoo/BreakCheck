@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import ProjectNav from "@/components/ProjectNav";
 import VerdictBanner from "@/components/VerdictBanner";
+import { buildMarkdown, buildPrComment } from "@/lib/impact/report";
 import type { ImpactReport, ChangeCol, ConsumerImpact } from "@/lib/impact/analyze";
 
 type Version = { _id: string; versionLabel: string; status: string };
@@ -23,6 +24,7 @@ export default function ImpactPage() {
   const [versions, setVersions] = useState<Version[] | null>(null);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [copied, setCopied] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [report, setReport] = useState<ImpactReport | null>(null);
@@ -52,6 +54,24 @@ export default function ImpactPage() {
       setReport(j.report);
       setRun(j.run);
     } finally { setBusy(false); }
+  }
+
+  function meta() {
+    const label = (id: string) => versions?.find((v) => v._id === id)?.versionLabel ?? "?";
+    return { project: slug, from: label(from), to: label(to), verdict: run!.verdict, reason: run!.reason };
+  }
+  async function copy(kind: "md" | "pr") {
+    if (!report || !run) return;
+    const text = kind === "md" ? buildMarkdown(report, meta()) : buildPrComment(report, meta());
+    await navigator.clipboard.writeText(text);
+    setCopied(kind); setTimeout(() => setCopied(""), 1500);
+  }
+  function download() {
+    if (!report || !run) return;
+    const url = URL.createObjectURL(new Blob([buildMarkdown(report, meta())], { type: "text/markdown" }));
+    const a = document.createElement("a");
+    a.href = url; a.download = `breakcheck-${slug}-${meta().from}-to-${meta().to}.md`; a.click();
+    URL.revokeObjectURL(url);
   }
 
   const s = report?.summary;
@@ -86,6 +106,18 @@ export default function ImpactPage() {
       {report && s && (
         <>
           {run && <VerdictBanner verdict={run.verdict} reason={run.reason} />}
+
+          {run && (
+            <div className="flex flex-wrap gap-2 text-sm">
+              <button onClick={() => copy("md")} className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 hover:bg-slate-50">
+                {copied === "md" ? "Copied!" : "Copy report as Markdown"}
+              </button>
+              <button onClick={() => copy("pr")} className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 hover:bg-slate-50">
+                {copied === "pr" ? "Copied!" : "Copy PR comment"}
+              </button>
+              <button onClick={download} className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 hover:bg-slate-50">Download .md</button>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {[
