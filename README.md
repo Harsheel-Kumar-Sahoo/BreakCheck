@@ -49,7 +49,7 @@ Specs are dereferenced, then flattened into keyed elements such as `GET /orders/
 
 - `npm test` runs the Vitest suite (rule table, task generator, verdicts, consumer validation).
 - `npm run verify:p1` to `verify:p8`, `verify:edge`, and `explain` check each layer against your database.
-
+ 
 ## Limitations
 
 - The consumer map is declared, not discovered. The import API is where a code scanner or gateway-log extractor would plug in.
