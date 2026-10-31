@@ -29,8 +29,16 @@ export default function Home() {
 
   return (
     <main className="mx-auto max-w-3xl space-y-6 p-6">
-      <h1 className="text-2xl font-semibold">BreakCheck</h1>
-      <p className="text-slate-600">If I ship this API version, who breaks?</p>
+      <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-wrap gap-2 text-xs">
+          <span className="rounded-full bg-indigo-50 px-2.5 py-1 font-medium text-indigo-700">NEXUS UNCHARTED</span>
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-700">MongoDB Student Hackathon</span>
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-700">Track 3 · Developer Tools</span>
+        </div>
+        <h1 className="text-3xl font-semibold">BreakCheck</h1>
+        <p className="text-slate-600">If I ship this API version, who breaks?</p>
+        <p className="text-sm text-slate-500">Team Almost Avengers · SVNIT</p>
+      </section>
 
       <form onSubmit={create} className="flex gap-2">
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="New project name"
